@@ -1,0 +1,160 @@
+classDiagram
+    %% Interfaces
+    class LibroDAO {
+        <<interface>>
+        +insertar(Libro libro) void
+        +actualizar(Libro libro) void
+        +eliminar(int id) void
+        +obtenerTodo() List~Libro~
+        +obtenerPorId(int id) Libro
+        +buscarPorIsbn(String isbn) List~Libro~
+        +buscarPorTitulo(String titulo) List~Libro~
+        +buscarPorAutor(String autor) List~Libro~
+    }
+    
+    class CategoriaDAO {
+        <<interface>>
+        +insertar(Categoria categoria) void
+        +actualizar(Categoria categoria) void
+        +eliminar(int id) void
+        +obtenerTodas() List~Categoria~
+        +obtenerPorId(int id) Categoria
+        +obtenerPorNombre(String nombre) Categoria
+    }
+    
+    %% Implementaciones DAO
+    class LibroSQL {
+        -Connection conexion
+        +insertar(Libro libro) void
+        +actualizar(Libro libro) void
+        +eliminar(int id) void
+        +obtenerTodo() List~Libro~
+        +obtenerPorId(int id) Libro
+        +buscarPorIsbn(String isbn) List~Libro~
+        +buscarPorTitulo(String titulo) List~Libro~
+        +buscarPorAutor(String autor) List~Libro~
+        -buscarLibros(String sql, String parametro) List~Libro~
+        -resultSetToLibro(ResultSet rs) Libro
+    }
+    
+    class CategoriaSQL {
+        +insertar(Categoria categoria) void
+        +actualizar(Categoria categoria) void
+        +eliminar(int id) void
+        +obtenerTodas() List~Categoria~
+        +obtenerPorId(int id) Categoria
+        +obtenerPorNombre(String nombre) Categoria
+        -resultSetToCategoria(ResultSet rs) Categoria
+    }
+    
+    %% Modelos
+    class Libro {
+        -int id
+        -String titulo
+        -String autor
+        -String isbn
+        -double precio
+        -int stock
+        -Categoria categoria
+        +Libro()
+        +Libro(String titulo, String autor, String isbn, double precio, int stock, Categoria categoria)
+        +getId() int
+        +setId(int id) void
+        +getTitulo() String
+        +setTitulo(String titulo) void
+        +getAutor() String
+        +setAutor(String autor) void
+        +getIsbn() String
+        +setIsbn(String isbn) void
+        +getPrecio() double
+        +setPrecio(double precio) void
+        +getStock() int
+        +setStock(int stock) void
+        +getCategoria() Categoria
+        +setCategoria(Categoria categoria) void
+        +toString() String
+    }
+    
+    class Categoria {
+        -int id
+        -String nombre
+        +Categoria()
+        +Categoria(String nombre)
+        +Categoria(int id, String nombre)
+        +getId() int
+        +setId(int id) void
+        +getNombre() String
+        +setNombre(String nombre) void
+        +equals(Object o) boolean
+        +hashCode() int
+        +toString() String
+    }
+    
+    %% Utilidades
+    class BD {
+        -static final String URL
+        -static final String USER
+        -static final String PASSWORD
+        -static final String DB_NAME
+        -static Connection connection
+        +static getConnection() Connection
+        -static crearBaseDeDatosSiNoExiste(Connection conn) void
+        -static crearTablasSiNoExisten() void
+        +static closeConnection() void
+    }
+    
+    %% Vista
+    class BibliotecaGUI {
+        -LibroDAO libroDAO
+        -CategoriaDAO categoriaDAO
+        -JTable librosTable
+        -JTable categoriasTable
+        -JTabbedPane tabbedPane
+        -JTextField buscarField
+        -JComboBox~String~ filtroCombo
+        +BibliotecaGUI()
+        -initComponents() void
+        -configurarPanelLibros(JPanel panel) void
+        -configurarPanelCategorias(JPanel panel) void
+        -cargarLibros() void
+        -cargarCategorias() void
+        -buscarLibros() void
+        -actualizarTablaLibros(List~Libro~ libros) void
+        -actualizarTablaCategorias(List~Categoria~ categorias) void
+        -mostrarDialogoLibro(Libro libro) void
+        -mostrarDialogoCategoria(Categoria categoria) void
+        -agregarCampo(JPanel panel, GridBagConstraints gbc, String label, JComponent field, int row) void
+        -editarLibroSeleccionado() void
+        -editarCategoriaSeleccionada() void
+        -eliminarLibro() void
+        -eliminarCategoria() void
+        +static main(String[] args) void
+    }
+    
+    class LibroTableModel {
+        -final String[] columnNames
+        -List~Libro~ libros
+        +LibroTableModel(List~Libro~ libros)
+        +getRowCount() int
+        +getColumnCount() int
+        +getColumnName(int column) String
+        +getValueAt(int rowIndex, int columnIndex) Object
+        +getLibroAt(int rowIndex) Libro
+    }
+    
+    class Main {
+        +static main(String[] args) void
+    }
+    
+    %% Relaciones
+    LibroDAO <|.. LibroSQL : implements
+    CategoriaDAO <|.. CategoriaSQL : implements
+    Libro "1" --> "1" Categoria : has
+    BibliotecaGUI --> LibroDAO : uses
+    BibliotecaGUI --> CategoriaDAO : uses
+    LibroTableModel --> Libro : contains
+    LibroSQL ..> BD : uses
+    CategoriaSQL ..> BD : uses
+    Main ..> BibliotecaGUI : creates
+    Main ..> BD : uses
+    BibliotecaGUI ..> LibroTableModel : uses
