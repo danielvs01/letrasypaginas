@@ -197,6 +197,7 @@ public class BibliotecaGUI extends JFrame {
         }
     }
 
+    //Crea una matriz bidimensional de objetos
     private void actualizarTablaLibros(List<Libro> libros) {
         String[] columnNames = { "ID", "Título", "Autor", "ISBN", "Precio", "Stock", "Categoría" };
         Object[][] data = new Object[libros.size()][7];
@@ -212,6 +213,7 @@ public class BibliotecaGUI extends JFrame {
             data[i][6] = libro.getCategoria().getNombre();
         }
 
+        //Configura el modelo de datos de la matriz
         librosTable.setModel(new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {

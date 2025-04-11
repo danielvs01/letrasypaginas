@@ -21,6 +21,7 @@ public class Categoria {
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     
+    //Comparar ids de categorias
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
